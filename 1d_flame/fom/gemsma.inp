@@ -1,0 +1,211 @@
+&grid
+ grid_dir = "../inputs/mesh",
+ gridfile = "straight_duct.msh",
+ num_of_domains = 1
+ lenref  = 0.0001, 0.0001,    ! lenref in each direction. input is array of dimension ndim. 
+&end
+
+&global_iteration
+ nsteps   = 100,   ! number of physical time steps
+ irestart = 1,       ! 0: from scratch IC 1: from previous calculation
+ iinit    = 0        ! 0: from scratch IC 1: from previous calculation Others: from different ICs
+ restartInputDir = "../inputs/RestartFiles",
+&end
+
+&simulation_monitor
+ iscr     = 1,    ! 0: no screen output 1: residual outpt 2: residual and dqv output
+ ifile    = 1,    ! 0: no file output  1: residual output
+ iplot    = 10,    ! 1: vertex-format tecplot output 4: cell-format tecplot output
+ nmonit   = 50000,  ! number of interval steps for result monitoring
+ nbackup  = 50000,  ! number of interval steps for result backup
+ binary_restart = .true.
+ numbackupsave = 40
+ backupread = -100 !-100 automatically looks for the latest restart file
+ iresoutput = 1
+&end
+
+&fluid_property
+ legacy_mode = .false.
+&end
+
+&number_of_boundary
+!
+! The boundary section has to be followed in the order
+!  Inlet
+!  Outlet
+!  Farfiled
+!  Wall
+!  Geom_topology
+!
+ n_in   = 1,     ! number of inlet boundary patches
+ n_out  = 1,     ! number of outlet boundary patches
+ n_far  = 0,     ! number of farfield (i.e. inlet/outlet) boundary patches
+ n_wall = 2,     ! number of wall boundary patches
+ n_geom = 0,     ! number of symmetric/asymmetric boundary patches 
+&end
+
+&inlet 
+!----------
+ label = 1,      ! same lable used in grid file
+ itype = 5,        ! 0 entropy and stagnation enthalpty calculated from p t mach
+ iturb = 0,
+ p     = 1.1e6,  ! pressure, 3.48e6 is the total pressure
+ t     = 300.,   ! temperature, 1030
+ mass  = 0.016,
+! mach = 0.00015, ! Mach number specify mach or velocity magnitude
+ u     = 10.67,      ! stagnation pressure and temperature will be calculated from p t and u
+! nuw   = 1.766e-5,
+ kin   = 1.e-2,
+ omega = 1.0e2,
+!        CH4   O2 
+ yi    = 1.0, 0.0, 0.0, 0.0, 0.0  ! Only the first one is solved in qv(isb)
+! TurbL = 0.02,
+! u_rms = 0.0,
+! N_modes = 100,
+! vswirl= 0.
+! freq   = 5000,
+! dfreq  = 5000,
+ fposc  = 0.0,
+! nfreq  = 3,
+&end
+!
+! if multi-inlets, please repeat here
+
+&outlet
+!-----------
+ label  = 2,
+ itype  = 1,
+ pback  = 0.876156E6, ! back pressure
+ freq   = 50000,
+ dfreq  = 5000,
+ fposc  = 0.1,
+ nfreq  = 1,
+&end
+! if you have multi-outlets, please repeat here
+
+! if multi-farfields, please repeat here
+
+&wall !-----Wall
+ label = 3, itype = 0
+ wvel = 0.0, 0.0
+ wtemp = 0
+&end
+
+&wall !------Overset
+ label = 30, itype = 0
+ wvel = 0.0, 0.0
+ wtemp = 0
+&end
+! if multi-walls, please repeat here
+
+&initial_condition
+ islast = 0,
+ p      = 1.0e6,
+ t      = 300.,     ! pressure and temperature
+ u      = 0.67,
+ yi     = 1.0, 0.0, 0.0, 0.0, 0.0
+ uIC    = 100.0, 0.0
+&end
+
+&initial_condition
+ islast = 1,
+ p      = 1.0e6,
+ t      = 2000,     ! pressure and temperature
+ u      = 5.5,
+ yi     = 0.0, 1.0, 0.0, 0.0, 0.0
+ xl     = 15
+ xh     = 1000 !139.7
+ uIC    = 100.0, 0.0
+&end
+
+&output_vars
+Static_Pressure           = .true.,
+Total_Pressure            = .false.,
+Temperature               = .true.,
+Total_Temperature         = .false.,
+U                         = .true.,
+V                         = .true.,
+W                         = .true.,
+Vorticity                 = .false.,
+Mach_Number               = .false.,
+Sound_Speed               = .false.,
+Density                   = .false.,
+Enthalpy                  = .false.,
+Entropy                   = .false.,
+Viscosity                 = .false.,
+Thermal_Conductivity      = .false.,
+Turbulent_Viscosity       = .false.,
+Turbulent_KE              = .false.,
+Turbulent_Dissipation     = .false.,
+Mass_Fraction             = .true.,
+Volume_Fraction           = .false.,
+Concentration             = .false.,
+SST_DES_Blending_Number   = .false.,
+Time_Step                 = .false.,
+Velocity_Divergence       = .false.,
+Heat_Release              = .true.,
+IBlank                    = .false.,
+/
+
+&ave_output_vars
+Av_Static_Pressure        = .true.,
+Av_U                      = .true.,
+Av_V                      = .true.,
+Av_W                      = .false.,
+Av_Temperature            = .true.,
+Av_Mass_Fraction          = .true.,
+Av_Turbulent_KE           = .false.,
+Av_Vorticity              = .true.,
+Av_Heat_Release           = .true.,
+Av_Sound_Speed            = .true.,
+Av_Mach_Number            = .true.,
+/
+
+&point_monitor
+number_monitor_points = 6,
+point_mon_interval = 1.0e1,
+block_id = 0
+cell_id  = 0
+xp       = 0.0, 20.0, 40.0, 60.0, 80.0, 100.0
+yp       = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+Static_Pressure = .true.
+U               = .true.
+Temperature     = .true.
+Heat_Release    = .true.
+Density         = .true.
+Mass_Fraction   = .true.
+&end
+
+&CI_integral
+number_CIi_zones          = 0,
+CIi_mon_interval          = 1.0e-3,
+grid_zones                = 0,
+xl                        = -10000, 0
+xh                        =  10000, 500
+yl                        = -10000, -10000
+yh                        =  10000,  10000
+xmin                      = 0,   -550
+xmax                      = 500,  1500
+ymin                      = 0, 0
+ymax                      = 88.5, 90
+xcount                    = 160, 50
+ycount                    = 29, 1
+/
+
+&IF_integral
+number_IFi_faces          = 0,
+number_IFi_faces          = 0,
+ifmt                      = 1,
+xl                        =      0.,  69570.,  88890., 105930., 178930.,
+xh                        =   1070.,  71710.,  91030., 108070., 181070.,
+yl                        = -46000., -46000., -46000., -46000., -46000.,
+yh                        =  46000.,  46000.,  46000.,  46000.,  46000.,
+zl                        = -46000., -46000., -46000., -46000., -46000.,
+zh                        =  46000.,  46000.,  46000.,  46000.,  46000.,
+output_pressure = 1,
+output_vx = 1,
+output_integral_mass = 1,
+output_integral_aver_pressure = 1,
+output_integral_momentum_x = 1
+/
+

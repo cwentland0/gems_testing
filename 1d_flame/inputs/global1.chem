@@ -1,0 +1,21 @@
+&prop_file
+ thermfile = "thermo.chem",
+ tranfile  = "trans.chem",
+ ljfile    = "lennardjones.chem",
+&end
+
+! Methane Air Reaction
+ELEMENTS
+H  O  C N
+END
+
+SPECIES
+Reactant Product
+END
+
+REACTIONS
+!CH4 + 2(O2+2.42H2O) = CO2 + 2H2O + 4.82H2O
+1
+Reactant=Product+G/1.0,0.0
+                2.12E10   0.0  -24358.0
+END
