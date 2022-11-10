@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# GEMS
+PointResults/
+UnsteadyFieldResults/
+Warnings/
+wall_time.dat
+gemsma.res.dat
+*.txt

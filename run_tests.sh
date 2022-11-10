@@ -10,16 +10,16 @@ gems_code_dir="/home/chris/Research/Code/gems_adaptive/code"
 # test_x: execute gems.x
 # test_ON: test optimization level -ON
 #   NOTE: execute must be in form "gems_ON.x", e.g. "gems_O3.x" for -O3
-test_x=1
+test_x=0
 test_O0=0
 test_O1=0
 test_O2=0
-test_O3=0
+test_O3=1
 
 # what type of tests to execute
 test_fom=1
-test_static=0
-test_adaptive=0
+test_static=1
+test_adaptive=1
 
 # what cases to test
 test_flame=1
@@ -30,20 +30,20 @@ test_duct=0
 
 # executable specification
 declare -a exec_list=()
-if [ ${test_x} -eq 1 ]; then
-    exec_list+=("gems.x")
+if [ ${test_x} -gt 0 ]; then
+    exec_list+=("")
 fi
-if [ ${test_O0} -eq 1 ]; then
-    exec_list+=("gems_O0.x")
+if [ ${test_O0} -gt 0 ]; then
+    exec_list+=("_O0")
 fi
-if [ ${test_O1} -eq 1 ]; then
-    exec_list+=("gems_O1.x")
+if [ ${test_O1} -gt 0 ]; then
+    exec_list+=("_O1")
 fi
-if [ ${test_O2} -eq 1 ]; then
-    exec_list+=("gems_O2.x")
+if [ ${test_O2} -gt 0 ]; then
+    exec_list+=("_O2")
 fi
-if [ ${test_O3} -eq 1 ]; then
-    exec_list+=("gems_O3.x")
+if [ ${test_O3} -gt 0 ]; then
+    exec_list+=("_O3")
 fi
 if [ ${#exec_list[@]} -eq 0 ]; then
     echo "No executables specified, exiting..."
@@ -51,7 +51,7 @@ if [ ${#exec_list[@]} -eq 0 ]; then
 fi
 # check that executables exist
 for exec_file in "${exec_list[@]}"; do
-    gems_exec=${gems_code_dir}/${exec_file}
+    gems_exec=${gems_code_dir}/gems${exec_file}.x
     if [ ! -f ${gems_exec} ]; then
         echo "GEMS executable does not exist at ${gems_exec}"
     fi
@@ -59,13 +59,13 @@ done
 
 # test type specification
 declare -a type_list=()
-if [ ${test_fom} -eq 1 ]; then
+if [ ${test_fom} -gt 0 ]; then
     type_list+=("fom")
 fi
-if [ ${test_static} -eq 1 ]; then
+if [ ${test_static} -gt 0 ]; then
     type_list+=("static")
 fi
-if [ ${test_adaptive} -eq 1 ]; then
+if [ ${test_adaptive} -gt 0 ]; then
     type_list+=("adaptive")
 fi
 if [ ${#type_list[@]} -eq 0 ]; then
@@ -75,13 +75,13 @@ fi
 
 # case specification
 declare -a case_list=()
-if [ ${test_flame} -eq 1 ]; then
+if [ ${test_flame} -gt 0 ]; then
     case_list+=("1d_flame")
 fi
-if [ ${test_injector} -eq 1 ]; then
+if [ ${test_injector} -gt 0 ]; then
     case_list+=("2d_injector")
 fi
-if [ ${test_duct} -eq 1 ]; then
+if [ ${test_duct} -gt 0 ]; then
     case_list+=("3d_duct")
 fi
 if [ ${#case_list[@]} -eq 0 ]; then
@@ -108,12 +108,15 @@ for case_dir in "${case_list[@]}"; do
 
         # enter working directory and copy inputs
         cd ${basedir}/${case_dir}/${type_dir}
-        cp ../inputs/* .
+        cp ../inputs/* . 2>/dev/null
 
         # set executable and run
         for exec_file in "${exec_list[@]}"; do
-            gems_exec=${gems_code_dir}/${exec_file}
-            mpiexec -n ${np} ${gems_exec} 2>&1 | tee output.txt
+            gems_exec=${gems_code_dir}/gems${exec_file}.x
+            echo "Executing ${gems_exec} for ${case_dir}/${type_dir}"
+            sleep 2
+            mpiexec -n ${np} ${gems_exec} 2>&1 | tee output${exec_file}.txt
+            mv gemsma.res.dat gemsma.res.${exec_file}.dat
         done
     done
 done

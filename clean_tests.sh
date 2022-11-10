@@ -10,13 +10,12 @@ if [ ${inp} != "yes" ]; then
     exit
 fi
 
-#declare -a case_list=('1d_flame' '2d_injector' '3d_duct')
-#declare -a type_list=('fom' 'static' 'adaptive')
 declare -a case_list=('1d_flame')
-declare -a type_list=('fom')
+#declare -a case_list=('1d_flame' '2d_injector' '3d_duct')
+declare -a type_list=('fom' 'static' 'adaptive')
 
 declare -a del_dirs=('AveFieldResults' 'FaceIntegralResults' 'PointResults' 'RestartFiles' 'UnsteadyFieldResults' 'VolIntegralResults' 'Warnings')
-declare -a del_files=('output.txt' 'gemsma.res.dat' 'wall_time.dat')
+declare -a del_files=('output*.txt' 'gemsma.res.*dat' 'wall_time.dat')
 
 declare -a spec_files
 for case_dir in "${case_list[@]}"; do
