@@ -1,0 +1,8 @@
+           1 OX_INLET
+           2 FUEL_INLET
+           4 OUTLET
+           3 OX_BOTTOM_WALL
+          30 TOP_WALL
+          31 INJECTOR_WALL
+          32 CHAMBER_BOTTOM_WALL
+          33 OX_TOP_WALL

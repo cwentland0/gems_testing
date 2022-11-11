@@ -1,0 +1,59 @@
+&romInterface
+ calcROM = .true.,
+ use_deim_res = .false.,
+ ndim    = 2,
+ ImpSolv = .true.,
+ ConsvQv = .false.,
+ ConsvEq = .true.,
+ chemImp = .true.,
+ InitialFromCFD = .false.,
+&end
+
+&inputFormat
+ binary_format = .false.,
+ binary_format_deim = .false.,
+ BasisFolder   = '../inputs/pod_basis/Spatial_Modes',
+ BasisFileHead = 'Spatial_Mode_',
+ BasisFileTail = '.dat',
+ PinvBasisFileHead = 'deim_k5_s1926/Precomputed_invPU_mode_',
+ PinvBasisFileTail = '.dat',
+ SampleFileHead = 'deim_k5_s1926/sampling_points_partion_',
+ SampleFileTail = '.dat',
+ romNorm       = '../norm.dat',
+ romMean       = '../mean.dat',
+ romConsQvNorm = '../ConsQvnorm.dat',
+ line_skip     = 19551,
+&end
+
+&romParameters
+ meanSubtract  = .true.,
+ vector_format = .true.,
+ ModeStart     = 5,
+ ModeIncre     = 5,
+ ModeEnd       = 5,
+ VariableNum   = 8,
+ imut          = 0,
+ start_time_step = 150000,
+ romMethod     = 2,
+ a_diss        = 1, 1, 1, 1, 1, 1, 1, 1
+ TempLimit     = .true.,
+ TempBound     = 270, 2750
+ DEIM_Basis_Num = 5,
+ adaptive_rom    = .false.,
+&end
+
+&adaptiveBasisSampling
+ init_window_size  = 10,
+ window_size       = 1,
+ update_time_step  = 1,
+ update_sampling_time_step = 5,
+ update_rank       = 1,
+ oneStep_update    = .true.,
+ iterative_update  = .true.,
+ nROMiterations    = 5,
+ n_bc_sampling     = 2,
+ bc_label_sampling = 1, 2,
+ qnorm             = 1.0E10, 1E10, 1E10, 1e10, 1.0, 1.0, 1.0, 1.0
+ SamplingMethod    = 0,
+ GlobalUpdate      = .true.,
+&end
